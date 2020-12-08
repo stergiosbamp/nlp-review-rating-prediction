@@ -6,8 +6,8 @@ from nltk.corpus import stopwords
 
 class Preprocess:
     def __init__(self):
-        # nltk.download('punkt')
-        # nltk.download('stopwords')
+        nltk.download('punkt')
+        nltk.download('stopwords')
         self.nlp = spacy.load("en_core_web_sm")
 
     def tokenize(self, sentence, keep_stopwords=False):
@@ -17,11 +17,12 @@ class Preprocess:
 
         Args:
             sentence (str): The sentence to tokenize
-            keep_stopwords (boolean): Whether to keep stopwords in tokenizing
+            keep_stopwords (boolean, optional): Whether to keep stopwords in tokenizing
 
         Returns:
             list: The list of the tokens from the sentence
         """
+
         tokens = nltk.word_tokenize(sentence)
 
         if keep_stopwords:
@@ -49,11 +50,12 @@ class Preprocess:
 
     def lemmatize(self, sentence, remove_punctuation=True):
         """
-        Method that lemmatizes tokens based on "spaCy" library
+        Method that lemmatizes tokens based on "spaCy" library.
+        Essentially internally it performs tokenization first and them finds the lemma for each token.
 
         Args:
             sentence (str): The sentence to lemmatize
-            remove_punctuation (boolean): Whether to keep punctuation
+            remove_punctuation (boolean, optional): Whether to keep punctuation
 
         Returns:
             list: The lemmatized tokens
