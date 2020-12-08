@@ -1,12 +1,14 @@
 import nltk
+import spacy
 
 from nltk.corpus import stopwords
 
 
 class Preprocess:
     def __init__(self):
-        nltk.download('punkt')
-        nltk.download('stopwords')
+        # nltk.download('punkt')
+        # nltk.download('stopwords')
+        self.nlp = spacy.load("en_core_web_sm")
 
     def tokenize(self, sentence, keep_stopwords=False):
         """
@@ -44,3 +46,28 @@ class Preprocess:
 
         stemmer = nltk.stem.PorterStemmer()
         return [stemmer.stem(token) for token in tokens]
+
+    def lemmatize(self, sentence, remove_punctuation=True):
+        """
+        Method that lemmatizes tokens based on "spaCy" library
+
+        Args:
+            sentence (str): The sentence to lemmatize
+            remove_punctuation (boolean): Whether to keep punctuation
+
+        Returns:
+            list: The lemmatized tokens
+        """
+
+        doc = self.nlp(sentence)
+
+        lemmatized_tokens = []
+        for token in doc:
+            if token.lemma_ != '-PRON-':
+                if remove_punctuation:
+                    if not (token.is_punct or token.is_space):
+                        lemmatized_tokens.append(token.lemma_)
+                else:
+                    lemmatized_tokens.append(token.lemma_)
+
+        return lemmatized_tokens
