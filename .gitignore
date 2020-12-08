@@ -15,3 +15,6 @@ __pycache__
 
 # Data collections
 data/*.json
+
+# Pickle files
+*.pkl
