@@ -15,6 +15,16 @@ class Downloader:
     def __init__(self, dest_dir="data/"):
         self.dest_dir = pathlib.Path(dest_dir)
 
+    def url_2_filename(self, url):
+        """Converts file url to file path.
+
+        Args:
+            url (str): URL of the file.
+
+        """
+
+        return self.dest_dir.joinpath(url.split("/")[-1])
+
     def get(self, url):
         """Gets the file corresponding to the given URL.
 
@@ -26,7 +36,7 @@ class Downloader:
         if not self.dest_dir.exists():
             self.dest_dir.mkdir()
 
-        filename = self.dest_dir.joinpath(url.split("/")[-1])
+        filename = self.url_2_filename(url)
         urllib.request.urlretrieve(url, filename)
 
     def _unzip(self, filename):
@@ -55,7 +65,7 @@ class Downloader:
         """
 
         self.get(url)
-        filename = self.dest_dir.joinpath(url.split("/")[-1])
+        filename = self.url_2_filename(url)
         self._unzip(filename)
 
 
