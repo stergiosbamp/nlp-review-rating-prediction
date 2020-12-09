@@ -10,20 +10,20 @@ class Preprocess:
         nltk.download('stopwords')
         self.nlp = spacy.load("en_core_web_sm")
 
-    def tokenize(self, sentence, keep_stopwords=False):
+    def tokenize(self, document, keep_stopwords=False):
         """
         Method that tokenizes a sentence using NLTK's recommended word tokenizer (TreebankWordTokenizer
         along with PunktSentenceTokenizer)
 
         Args:
-            sentence (str): The sentence to tokenize
+            document (str): The sentence to tokenize
             keep_stopwords (boolean, optional): Whether to keep stopwords in tokenizing
 
         Returns:
             list: The list of the tokens from the sentence
         """
 
-        tokens = nltk.word_tokenize(sentence)
+        tokens = nltk.word_tokenize(document)
 
         if keep_stopwords:
             filtered_tokens = []
@@ -48,20 +48,20 @@ class Preprocess:
         stemmer = nltk.stem.PorterStemmer()
         return [stemmer.stem(token) for token in tokens]
 
-    def lemmatize(self, sentence, remove_punctuation=True):
+    def lemmatize(self, document, remove_punctuation=True):
         """
         Method that lemmatizes tokens based on "spaCy" library.
         Essentially internally it performs tokenization first and them finds the lemma for each token.
 
         Args:
-            sentence (str): The sentence to lemmatize
+            document (str): The sentence to lemmatize
             remove_punctuation (boolean, optional): Whether to keep punctuation
 
         Returns:
             list: The lemmatized tokens
         """
 
-        doc = self.nlp(sentence)
+        doc = self.nlp(document)
 
         lemmatized_tokens = []
         for token in doc:
