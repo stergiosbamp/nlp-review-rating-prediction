@@ -32,13 +32,18 @@ class TextClassification:
         return metrics.mean_absolute_error(y_test, y_pred)
 
     @staticmethod
-    def save_classification_report(y_test, y_pred, filename):
-        report = metrics.classification_report(y_test, y_pred, output_dict=True)
+    def classification_report(y_test, y_pred, filename=None, save=False):
+        if save:
+            report = metrics.classification_report(y_test, y_pred, output_dict=True)
 
-        file = pathlib.Path(filename)
-        if file.suffix == '':
-            file = str(file) + ".csv"
+            if filename is None:
+                raise Exception("Cannot perform save with empty filename")
 
-        df = pd.DataFrame.from_dict(report)
-        df.to_csv(file)
+            file = pathlib.Path(filename)
+            if file.suffix == '':
+                file = str(file) + ".csv"
 
+            df = pd.DataFrame.from_dict(report)
+            df.to_csv(file)
+        else:
+            return metrics.classification_report(y_test, y_pred)
