@@ -57,8 +57,8 @@ class Extractor:
             if len(data_fields) == 1:
                 X = df[data_fields[0]]
             else:
-                X = df[data_fields].values
-            y = df[target_field].values
+                X = df[data_fields]
+            y = df[target_field]
             return X, y
 
         return df
