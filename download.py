@@ -33,10 +33,14 @@ class Downloader:
 
         """
 
+        filename = self._url_to_filename(url)
+
+        if filename.exists():
+            return
+
         if not self.dest_dir.exists():
             self.dest_dir.mkdir()
 
-        filename = self._url_to_filename(url)
         urllib.request.urlretrieve(url, filename)
 
     def _unzip(self, filename):
@@ -64,8 +68,12 @@ class Downloader:
 
         """
 
-        self.get(url)
         filename = self._url_to_filename(url)
+
+        if filename.with_suffix("").exists():
+            return
+
+        self.get(url)
         self._unzip(filename)
 
 
