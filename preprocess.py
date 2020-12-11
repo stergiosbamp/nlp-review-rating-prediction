@@ -48,6 +48,20 @@ class Preprocess:
         stemmer = nltk.stem.PorterStemmer()
         return [stemmer.stem(token) for token in tokens]
 
+    def tokenize_stem(self, document):
+        """
+        Method that bundles tokenize and stemming actions for our experiments
+
+        Args:
+            document: The text to tokenize and stem
+
+        Returns:
+            list: The tokenized and stemmed tokens
+        """
+
+        tokens = self.tokenize(document)
+        return self.stem(tokens)
+
     def lemmatize(self, document, remove_punctuation=True):
         """
         Method that lemmatizes tokens based on "spaCy" library.
