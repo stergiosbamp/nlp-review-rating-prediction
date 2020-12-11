@@ -3,6 +3,7 @@ import pathlib
 
 from sklearn import metrics
 
+from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
 
 
@@ -18,6 +19,11 @@ class TextClassification:
     def predict(self, x_test):
         y_predicted = self.pipeline.predict(x_test)
         return y_predicted
+
+    def best_hyperparameters(self, x_train, y_train, param_grid):
+        search = GridSearchCV(self.pipeline, param_grid, n_jobs=-1)
+        search.fit(x_train, y_train)
+        return search.best_params_
 
     @staticmethod
     def accuracy(y_test, y_pred):
