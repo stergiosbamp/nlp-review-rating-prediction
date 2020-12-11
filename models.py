@@ -25,6 +25,11 @@ class TextClassification:
         search.fit(x_train, y_train)
         return search.best_params_
 
+    def best_estimator(self, x_train, y_train, param_grid):
+        search = GridSearchCV(self.pipeline, param_grid, n_jobs=-1)
+        search.fit(x_train, y_train)
+        return search.best_estimator_[1]
+
     @staticmethod
     def accuracy(y_test, y_pred):
         return metrics.accuracy_score(y_test, y_pred)
