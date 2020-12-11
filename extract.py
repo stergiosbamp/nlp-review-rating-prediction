@@ -11,10 +11,11 @@ class Extractor:
                          target_field,
                          metadata_filename=None,
                          metadata_fields=None,
+                         drop_duplicates=False,
                          return_X_y=False):
         """Extracts examples from a JSON Lines file.
 
-        Returns a Pandas DataFrame by default.
+        Returns a pandas.core.frame.DataFrame object by default.
 
         Args:
             filename (str): File path of the JSON Lines file.
@@ -25,13 +26,15 @@ class Extractor:
                 metadata file.
             metadata_fields (List[str], optional): List of fields that
                 correspond to additional feature variables.
-            return_X_y (bool): Whether to return a tuple of numpy.ndarray
-                instead of a pandas.DataFrame.
-        
+            drop_duplicates (bool): Whether to drop duplicate examples.
+                Defaults to False.
+            return_X_y (bool): Whether to return data and target as seperate
+                objects. Defaults to False.
+
         Returns:
-            By defalut a pandas.DataFrame. Otherwise if return_X_y is True, a
-                tuple of numpy.ndarray.
-        
+            pandas.core.frame.DataFrame or pandas.core.series.Series object
+            depending on len(target_fields) and return_X_y flag.
+
         """
 
         if metadata_filename or metadata_fields:
@@ -47,9 +50,15 @@ class Extractor:
         df = pd.DataFrame.from_records(data)
         df = df[data_fields + [target_field]].dropna()
 
+        if drop_duplicates:
+            df.drop_duplicates(inplace=True)
+
         if return_X_y:
-            X = df[data_fields].values
-            y = df[target_field].values
+            if len(data_fields) == 1:
+                X = df[data_fields[0]]
+            else:
+                X = df[data_fields]
+            y = df[target_field]
             return X, y
 
         return df
@@ -58,10 +67,11 @@ class Extractor:
 if __name__ == "__main__":
 
     # example use
-    filename = "AMAZON_FASHION_5.json"
+    filename = "data/AMAZON_FASHION_5.json"
     data_fields = ["reviewText"]
     target_field = "overall"
     X, y = Extractor.extract_examples(filename,
                                       data_fields,
                                       target_field,
+                                      drop_duplicates=True,
                                       return_X_y=True)

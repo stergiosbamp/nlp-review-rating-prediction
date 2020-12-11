@@ -15,7 +15,7 @@ class Downloader:
     def __init__(self, dest_dir="data/"):
         self.dest_dir = pathlib.Path(dest_dir)
 
-    def url_to_filename(self, url):
+    def _url_to_filename(self, url):
         """Converts file url to file path.
 
         Args:
@@ -33,10 +33,14 @@ class Downloader:
 
         """
 
+        filename = self._url_to_filename(url)
+
+        if filename.exists():
+            return
+
         if not self.dest_dir.exists():
             self.dest_dir.mkdir()
 
-        filename = self.url_to_filename(url)
         urllib.request.urlretrieve(url, filename)
 
     def _unzip(self, filename):
@@ -64,8 +68,12 @@ class Downloader:
 
         """
 
+        filename = self._url_to_filename(url)
+
+        if filename.with_suffix("").exists():
+            return
+
         self.get(url)
-        filename = self.url_to_filename(url)
         self._unzip(filename)
 
 
