@@ -14,7 +14,7 @@ class Experiment:
     BASE_DIR = "../findings"
     BEST_CLF_ID = "best-clf"
 
-    def __init__(self, clf, directory, param_grid):
+    def __init__(self, clf, directory, param_grid=None):
         self.clf = clf
         self.param_grid = param_grid
         self.dir = directory
@@ -65,11 +65,16 @@ class Experiment:
     def run(self, X, y):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
 
-        if self.pickle_exists(self.BEST_CLF_ID):
-            best_clf = self.load(self.BEST_CLF_ID)
+        # If param grid is None that means the client of experiment
+        # doesn't want to perform GridSearchCV
+        if self.param_grid is not None:
+            if self.pickle_exists(self.BEST_CLF_ID):
+                best_clf = self.load(self.BEST_CLF_ID)
+            else:
+                best_clf = self.find_best_clf(X_train, y_train)
+                self.save(best_clf, self.BEST_CLF_ID)
         else:
-            best_clf = self.find_best_clf(X_train, y_train)
-            self.save(best_clf, self.BEST_CLF_ID)
+            best_clf = self.clf
 
         for obj in zip(self.vectorizers, self.experiments_id):
             vectorizer, experiment_id = obj
