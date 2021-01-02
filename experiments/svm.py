@@ -15,6 +15,5 @@ if __name__ == '__main__':
     experiment = SVMExperiment()
 
     X, y = experiment.load_data(url, dest_dir="../data")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
 
     experiment.run(X, y)
