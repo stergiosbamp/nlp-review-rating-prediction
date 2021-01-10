@@ -1,6 +1,6 @@
 import argparse
 
-from experiment import SVMExperiment
+from experiment import NaiveBayesExperiment
 
 
 if __name__ == '__main__':
@@ -9,7 +9,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     url = args.url
 
-    experiment = SVMExperiment()
+    experiment = NaiveBayesExperiment()
 
     X, y = experiment.load_data(url, dest_dir="../data")
 

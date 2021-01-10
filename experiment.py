@@ -4,6 +4,7 @@ import pathlib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
+from sklearn.naive_bayes import MultinomialNB
 
 from dataset import DatasetBuilder
 from models import TextClassification
@@ -69,6 +70,7 @@ class Experiment:
         # doesn't want to perform GridSearchCV
         if self.param_grid is not None:
             if self.pickle_exists(self.BEST_CLF_ID):
+                print("Loading best classifier from pickle file")
                 best_clf = self.load(self.BEST_CLF_ID)
             else:
                 best_clf = self.find_best_clf(X_train, y_train)
@@ -81,6 +83,7 @@ class Experiment:
 
             print("For experiment using: {}".format(vectorizer.__repr__()))
             if self.pickle_exists(experiment_id):
+                print("Loading classification task from pickle file")
                 clf_task = self.load(experiment_id)
             else:
                 clf_task = TextClassification(vectorizer=vectorizer, classifier=best_clf)
@@ -103,3 +106,11 @@ class SVMExperiment(Experiment):
             'linearsvc__loss': ['hinge', 'squared_hinge']
         }
         super().__init__(LinearSVC(), "SVM", param_grid)
+
+
+class NaiveBayesExperiment(Experiment):
+    def __init__(self):
+        param_grid = {
+            'multinomialnb__alpha': [0.0, 0.1, 0.5, 1.0]
+        }
+        super().__init__(MultinomialNB(), "NAIVE-BAYES", param_grid)
