@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
 
 from dataset import DatasetBuilder
 from models import TextClassification
@@ -114,3 +115,12 @@ class NaiveBayesExperiment(Experiment):
             'multinomialnb__alpha': [0.0, 0.1, 0.5, 1.0]
         }
         super().__init__(MultinomialNB(), "NAIVE-BAYES", param_grid)
+
+
+class LogisticRegressionExperiment(Experiment):
+    def __init__(self):
+        param_grid = {
+            'logisticregression__solver': ['saga', 'lbfgs'],
+            'logisticregression__C': [0.3, 1.0, 1.5]
+        }
+        super().__init__(LogisticRegression(n_jobs=-1), 'LOGISTIC-REGRESSION', param_grid)
