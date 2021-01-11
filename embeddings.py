@@ -4,9 +4,13 @@ from sklearn import metrics
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+from gensim.models import Word2Vec, KeyedVectors
+from gensim import downloader
+
 
 from extract import Extractor
 from models import TextClassification
@@ -14,7 +18,7 @@ from preprocess import Preprocess
 
 
 def load_data():
-    filename = "data/AMAZON_FASHION_5.json"
+    filename = "data/Software_5.json"
     data_fields = ["reviewText"]
     target_field = "overall"
     X, y = Extractor.extract_examples(filename,
@@ -55,8 +59,7 @@ class Doc2VecVectorizer:
         return embeddings
 
 
-class MeanGloveVectorizer():
-
+class MeanGloveVectorizer:
     def __init__(self, glove_filename):
         with open(glove_filename, "rb") as lines:
             glove = {
@@ -98,27 +101,62 @@ if __name__ == '__main__':
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=14)
 
-    # Doc2Vec
-    clf = make_pipeline(Doc2VecVectorizer(), LogisticRegression())
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
+    vocabulary = []
+    preprocess = Preprocess()
+
+    # Download glove twitter embeddings and save it for later use
+    # glove_vectors = downloader.load("glove-twitter-25")
+    # glove_vectors.save("glove-twitter-25.kv")
+
+    print("loading...")
+    glove_embeddings = KeyedVectors.load("glove-twitter-25.kv")
+    print("loaded model")
+
+    train_embeddings = []
+    for doc in X_train:
+        doc_embeddings = []
+
+        tokenized_doc = preprocess.tokenize(doc, keep_stopwords=True)
+        lower_tokenized_doc = [token.lower() for token in tokenized_doc]
+
+        for token in lower_tokenized_doc:
+            try:
+                emb = glove_embeddings.wv[token]
+                doc_embeddings.append(emb)
+            except KeyError as err:
+                continue
+
+        if doc_embeddings:
+            doc_embedding = np.mean(doc_embeddings, axis=0)
+        else:
+            doc_embedding = np.zeros(25)
+        train_embeddings.append(doc_embedding)
+
+    print("Ended training embeddings")
+    test_embeddings = []
+    for doc in X_test:
+        doc_embeddings = []
+
+        tokenized_doc = preprocess.tokenize(doc, keep_stopwords=True)
+        lower_tokenized_doc = [token.lower() for token in tokenized_doc]
+
+        for token in lower_tokenized_doc:
+            try:
+                emb = glove_embeddings.wv[token]
+                doc_embeddings.append(emb)
+            except KeyError as err:
+                continue
+
+        if doc_embeddings:
+            doc_embedding = np.mean(doc_embeddings, axis=0)
+        else:
+            doc_embedding = np.zeros(25)
+        test_embeddings.append(doc_embedding)
+
+    print("Ended testing embeddings")
+    clf = RandomForestClassifier()
+    clf.fit(train_embeddings, y_train)
+    y_pred = clf.predict(test_embeddings)
 
     print(f"Accuracy: {metrics.accuracy_score(y_test, y_pred)}")
     print(f"F1-score: {metrics.f1_score(y_test, y_pred, average='macro')}")
-
-    # Glove
-    clf_glove = make_pipeline(MeanGloveVectorizer("data/glove.6B.100d.txt"),
-                              LogisticRegression())
-    clf_glove.fit(X_train, y_train)
-    y_pred_glove = clf_glove.predict(X_test)
-
-    print(f"Accuracy: {metrics.accuracy_score(y_test, y_pred_glove)}")
-    print(
-        f"F1-score: {metrics.f1_score(y_test, y_pred_glove, average='macro')}")
-
-    print(clf)
-    print(clf_glove)
-
-    # for doc in X_test:
-
-    # clf_task = TextClassification(TfidfVectorizer(), LogisticRegression())
