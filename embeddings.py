@@ -1,4 +1,5 @@
 import numpy as np
+import pathlib
 
 from sklearn import metrics
 
@@ -30,22 +31,49 @@ def load_data():
 
 
 class Doc2VecVectorizer:
-    def __init__(self):
+    def __init__(self, vector_size, window, workers, model_path):
+        self.workers = workers
+        self.window = window
+        self.vector_size = vector_size
+        self.model_path = model_path
+
         self.preprocess = Preprocess()
 
+    def load_model(self):
+        return Doc2Vec.load(self.model_path)
+
+    def save_model(self, model):
+        if model is not None:
+            model.save(self.model_path)
+        else:
+            raise Exception("Model has not been trained to be saved")
+
+    def model_exists(self):
+        path = pathlib.Path(self.model_path)
+        if path.exists():
+            return True
+        return False
+
     def fit(self, X, y):
-        vocabulary = []
-        for doc in X:
-            lemmatized_doc = self.preprocess.lemmatize(doc)
-            vocabulary.append(lemmatized_doc)
+        if self.model_exists():
+            self.model = self.load_model()
+        else:
+            vocabulary = []
+            for doc in X:
+                lemmatized_doc = self.preprocess.lemmatize(doc)
+                vocabulary.append(lemmatized_doc)
 
-        documents = []
-        for i, doc in enumerate(vocabulary):
-            tagged_doc = TaggedDocument(doc, [i])
-            documents.append(tagged_doc)
+            documents = []
+            for i, doc in enumerate(vocabulary):
+                tagged_doc = TaggedDocument(doc, [i])
+                documents.append(tagged_doc)
 
-        model = Doc2Vec(documents, vector_size=20, window=2, workers=4)
-        self.model = model
+            model = Doc2Vec(documents,
+                            vector_size=self.vector_size,
+                            window=self.window,
+                            workers=self.workers)
+            self.save_model(model)
+            self.model = model
 
         return self
 
@@ -100,6 +128,19 @@ if __name__ == '__main__':
     X, y = load_data()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=14)
+
+    classification_task = TextClassification(Doc2VecVectorizer(vector_size=20,
+                                                               window=2,
+                                                               workers=4,
+                                                               model_path='software.doc2vec'),
+                                             LogisticRegression())
+    classification_task.fit(X_train, y_train)
+    # TODO
+    # Also save the classification task apart from the embeddings model
+    y_predicted = classification_task.predict(X_test)
+
+    print(classification_task.classification_report(y_test, y_predicted))
+    exit()
 
     vocabulary = []
     preprocess = Preprocess()
