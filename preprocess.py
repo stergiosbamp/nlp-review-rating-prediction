@@ -6,8 +6,8 @@ from nltk.corpus import stopwords
 
 class Preprocess:
     def __init__(self):
-        nltk.download('punkt')
-        nltk.download('stopwords')
+        # nltk.download('punkt')
+        # nltk.download('stopwords')
         self.nlp = spacy.load("en_core_web_sm")
 
     def tokenize(self, document, keep_stopwords=False):
@@ -87,3 +87,16 @@ class Preprocess:
                     lemmatized_tokens.append(token.lemma_)
 
         return lemmatized_tokens
+
+    @staticmethod
+    def lowercase(tokens):
+        """
+        Method that takes a list of tokens and converts them to lowercase
+
+        Args:
+            tokens (list): The list of tokens to be converted in lowercase
+
+        Returns:
+            (list): The tokens in lowercase
+        """
+        return [token.lower() for token in tokens]
