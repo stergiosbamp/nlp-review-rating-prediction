@@ -1,30 +1,16 @@
 import numpy as np
 import pathlib
 
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from gensim.models import KeyedVectors
 from gensim import downloader
+from gensim.models import Word2Vec
 
-from extract import Extractor
-from models import TextClassification
 from preprocess import Preprocess
 
 
-def load_data():
-    filename = "data/Software_5.json"
-    data_fields = ["reviewText"]
-    target_field = "overall"
-    X, y = Extractor.extract_examples(filename,
-                                      data_fields,
-                                      target_field,
-                                      drop_duplicates=True,
-                                      return_X_y=True)
-    return X, y
-
-
 class Doc2VecVectorizer:
+
     def __init__(self, vector_size, window, workers, model_path):
         self.workers = workers
         self.window = window
@@ -82,6 +68,7 @@ class Doc2VecVectorizer:
 
 
 class MeanGloveTwitterVectorizer:
+
     def __init__(self, model_path):
         self.model_path = model_path
         if self.model_exists():
@@ -134,26 +121,70 @@ class MeanGloveTwitterVectorizer:
         return embeddings
 
 
-if __name__ == '__main__':
-    # Read dataset
-    X, y = load_data()
+class CustomWord2VecVectorizer:
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+    def __init__(self, size, model_path, window=5, workers=4):
+        self.workers = workers
+        self.window = window
+        self.size = size
+        self.model_path = model_path
+        self.preprocess = Preprocess()
 
-    # Doc2Vec
-    classification_task = TextClassification(Doc2VecVectorizer(vector_size=20,
-                                                               window=2,
-                                                               workers=4,
-                                                               model_path='software.doc2vec'),
-                                             LogisticRegression(solver='saga'))
-    classification_task.fit(X_train, y_train)
-    y_predicted = classification_task.predict(X_test)
-    classification_task.classification_report(y_test, y_predicted, filename='d2v-results-logistic.csv', save=True)
+    def load_model(self):
+        return Word2Vec.load(self.model_path)
 
-    # Word2Vec Glove
-    classification_task = TextClassification(MeanGloveTwitterVectorizer(model_path="glove-twitter-25.kv"),
-                                             LogisticRegression(solver='saga'))
+    def save_model(self, model):
+        if model is not None:
+            model.save(self.model_path)
+        else:
+            raise Exception("Model has not been trained to be saved")
 
-    classification_task.fit(X_train, y_train)
-    y_predicted = classification_task.predict(X_test)
-    classification_task.classification_report(y_test, y_predicted, filename="w2v-results-logistic.csv", save=True)
+    def model_exists(self):
+        path = pathlib.Path(self.model_path)
+        if path.exists():
+            return True
+        return False
+
+    def fit(self, X, y):
+        if self.model_exists():
+            self.model = self.load_model()
+        else:
+            tokenized_docs_train = []
+            for doc in X:
+                tokenized_doc = self.preprocess.tokenize(doc,
+                                                         keep_stopwords=True)
+                lower_tokenized_doc = self.preprocess.lowercase(tokenized_doc)
+                tokenized_docs_train.append(lower_tokenized_doc)
+
+            model = Word2Vec(tokenized_docs_train,
+                             size=self.size,
+                             window=self.window,
+                             worker=self.workers)
+
+            self.save_model(model)
+            self.model = model
+
+        return self
+
+    def transform(self, X):
+        embeddings = []
+        for doc in X:
+            doc_embeddings = []
+
+            tokenized_doc = self.preprocess.tokenize(doc, keep_stopwords=True)
+            lower_tokenized_doc = self.preprocess.lowercase(tokenized_doc)
+
+            for token in lower_tokenized_doc:
+                try:
+                    embedding = self.model.wv[token]
+                    doc_embeddings.append(embedding)
+                except KeyError as err:
+                    continue
+
+            if doc_embeddings:
+                doc_embedding = np.mean(doc_embeddings, axis=0)
+            else:
+                doc_embedding = np.zeros(self.size)
+            embeddings.append(doc_embedding)
+
+        return embeddings
