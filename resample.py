@@ -22,4 +22,4 @@ class Resampler:
 class Oversampler(Resampler):
 
     def __init__(self):
-        super(Oversampler, self).__init__(RandomOverSampler())
+        super(Oversampler, self).__init__(RandomOverSampler(random_state=14))
