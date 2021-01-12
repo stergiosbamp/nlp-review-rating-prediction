@@ -1,5 +1,6 @@
 import pickle
 import pathlib
+import time
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
@@ -82,6 +83,9 @@ class Experiment:
         for obj in zip(self.vectorizers, self.experiments_id):
             vectorizer, experiment_id = obj
 
+            # Start time
+            vectorizer_start_time = time.perf_counter()
+
             print("For experiment using: {}".format(vectorizer.__repr__()))
             if self.pickle_exists(experiment_id):
                 print("Loading classification task from pickle file")
@@ -92,8 +96,13 @@ class Experiment:
                 self.save(clf_task, experiment_id)
 
             y_predicted = clf_task.predict(X_test)
-            print("MEA:", clf_task.mean_absolute_error(y_test, y_predicted))
-            print("Saving classification metrics")
+
+            # Classification End time
+            vectorizer_end_time = time.perf_counter()
+
+            print("\tMEA:", clf_task.mean_absolute_error(y_test, y_predicted))
+            print("\tClassification elapsed time: {}".format(vectorizer_end_time - vectorizer_start_time))
+            print("\tSaving classification metrics")
             target_file = pathlib.Path(self.BASE_DIR, self.dir, "clf-metrics-{}".format(experiment_id))
             clf_task.classification_report(y_test,
                                            y_predicted,
