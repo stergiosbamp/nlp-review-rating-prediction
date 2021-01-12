@@ -18,3 +18,8 @@ data/*.json
 
 # Pickle files
 *.pkl
+
+# Saved models
+# Gensim's glove twitter embeddings
+data/glove-twitter-*
+data/*.doc2vec
