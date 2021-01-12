@@ -6,8 +6,8 @@ from nltk.corpus import stopwords
 
 class Preprocess:
     def __init__(self):
-        # nltk.download('punkt')
-        # nltk.download('stopwords')
+        nltk.download('punkt')
+        nltk.download('stopwords')
         self.nlp = spacy.load("en_core_web_sm")
 
     def tokenize(self, document, keep_stopwords=False):
@@ -24,11 +24,12 @@ class Preprocess:
         """
 
         tokens = nltk.word_tokenize(document)
+        stopwords_set = set(stopwords.words('english'))
 
         if keep_stopwords:
             filtered_tokens = []
             for token in tokens:
-                if token not in set(stopwords.words('english')):
+                if token not in stopwords_set:
                     filtered_tokens.append(token)
             return filtered_tokens
 
