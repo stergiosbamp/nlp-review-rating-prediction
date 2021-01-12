@@ -11,7 +11,7 @@ from preprocess import Preprocess
 
 class Doc2VecVectorizer:
 
-    def __init__(self, vector_size, window, workers, model_path):
+    def __init__(self, vector_size, model_path, window=5, workers=4):
         self.workers = workers
         self.window = window
         self.vector_size = vector_size
@@ -36,6 +36,7 @@ class Doc2VecVectorizer:
 
     def fit(self, X, y):
         if self.model_exists():
+            print("Loaded pre-trained Doc2Vec model")
             self.model = self.load_model()
         else:
             vocabulary = []
@@ -53,6 +54,7 @@ class Doc2VecVectorizer:
                             window=self.window,
                             workers=self.workers)
             self.save_model(model)
+            print("Saved trained Doc2Vec model")
             self.model = model
 
         return self
@@ -69,13 +71,18 @@ class Doc2VecVectorizer:
 
 class MeanGloveTwitterVectorizer:
 
-    def __init__(self, model_path):
+    def __init__(self, model_path, model_to_download, model_vector_size):
         self.model_path = model_path
+        self.model_to_download = model_to_download
+        self.model_vector_size = model_vector_size
         if self.model_exists():
+            print("Loading Gensim's model: {}".format(self.model_to_download))
             self.glove_vectors = self.load_model()
         else:
-            self.glove_vectors = downloader.load("glove-twitter-25")
+            print("Downloading Gensim's model : {}...".format(self.model_to_download))
+            self.glove_vectors = downloader.load(self.model_to_download)
             self.glove_vectors.save(self.model_path)
+            print("Downloaded and saved model")
 
         self.preprocess = Preprocess()
 
@@ -115,7 +122,7 @@ class MeanGloveTwitterVectorizer:
             if doc_embeddings:
                 doc_embedding = np.mean(doc_embeddings, axis=0)
             else:
-                doc_embedding = np.zeros(25)
+                doc_embedding = np.zeros(self.model_vector_size)
             embeddings.append(doc_embedding)
 
         return embeddings
@@ -159,7 +166,7 @@ class CustomWord2VecVectorizer:
             model = Word2Vec(tokenized_docs_train,
                              size=self.size,
                              window=self.window,
-                             worker=self.workers)
+                             workers=self.workers)
 
             self.save_model(model)
             self.model = model
