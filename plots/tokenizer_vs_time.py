@@ -13,7 +13,7 @@ def plot_tokenizers_vs_time(vectorizers_time, classifier):
 
 
 if __name__ == "__main__":
-    LABELS = ['TfIdfVectorizer', 'TdIdfVectorizer (Lemmatize)', 'TfIdfVectorizer (Stemming)']
+    LABELS = ['TfIdfVectorizer', 'TfIdfVectorizer (Lemmatize)', 'TfIdfVectorizer (Stemming)']
 
     # Naive Bayes classifier
     naive_bayes_vectorizers_time = [0.9424, 30.7023, 235.69]
