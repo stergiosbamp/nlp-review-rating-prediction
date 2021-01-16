@@ -24,11 +24,12 @@ class Preprocess:
         """
 
         tokens = nltk.word_tokenize(document)
+        stopwords_set = set(stopwords.words('english'))
 
         if keep_stopwords:
             filtered_tokens = []
             for token in tokens:
-                if token not in set(stopwords.words('english')):
+                if token not in stopwords_set:
                     filtered_tokens.append(token)
             return filtered_tokens
 
@@ -87,3 +88,16 @@ class Preprocess:
                     lemmatized_tokens.append(token.lemma_)
 
         return lemmatized_tokens
+
+    @staticmethod
+    def lowercase(tokens):
+        """
+        Method that takes a list of tokens and converts them to lowercase
+
+        Args:
+            tokens (list): The list of tokens to be converted in lowercase
+
+        Returns:
+            (list): The tokens in lowercase
+        """
+        return [token.lower() for token in tokens]

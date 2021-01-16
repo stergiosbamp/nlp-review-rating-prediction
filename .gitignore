@@ -6,6 +6,9 @@ venv/
 .idea/
 .vscode/
 
+# Linters & formatters
+.style.yapf
+
 # Python cache files
 __pycache__
 *.pyc
@@ -18,3 +21,8 @@ data/*.json
 
 # Pickle files
 *.pkl
+
+# Saved models
+# Gensim's glove twitter embeddings
+data/glove-twitter-*
+data/*.doc2vec
