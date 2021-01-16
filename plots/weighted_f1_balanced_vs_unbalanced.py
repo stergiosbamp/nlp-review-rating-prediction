@@ -6,9 +6,6 @@ models = ("Logistic Regression", "Linear SVM", "Naive Bayes")
 unbalanced_f1s = (0.5337, 0.5129, 0.4125)
 balanced_f1s = (0.5442, 0.5264, 0.5028)
 
-men_means = (20, 35, 30, 35, 27)
-women_means = (25, 32, 34, 20, 25)
-
 ind = np.arange(len(models))  # the x locations for the groups
 width = 0.4  # the width of the bars
 

@@ -9,9 +9,6 @@ weighted_recalls = (0.5436, 0.3998, 0.3954, 0.4530)
 weighted_f1s = (0.5442, 0.4185, 0.4142, 0.4399)
 maes = (0.6818, 1.0353, 1.0306, 1.0306)
 
-men_means = (20, 35, 30, 35, 27)
-women_means = (25, 32, 34, 20, 25)
-
 ind = np.arange(len(models))  # the x locations for the groups
 width = 0.4  # the width of the bars
 
