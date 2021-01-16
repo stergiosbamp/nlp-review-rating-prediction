@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 
 
 def plot_tokenizers_vs_time(vectorizers_time, classifier):
-    vectorizers_time = [0.9424, 30.7023, 235.69]
-
     plt.figure()
     plt.bar(LABELS, vectorizers_time, width=0.3)
     plt.title("Train and test time per Vectorizer for '{}' classifier".format(classifier))
