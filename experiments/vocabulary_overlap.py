@@ -28,10 +28,7 @@ if __name__ == '__main__':
     url = args.url
 
     X, y = Experiment.load_data(url, dest_dir="../data")
-    X_train, X_test, y_train, y_test = train_test_split(X,
-                                                        y,
-                                                        test_size=0.3,
-                                                        random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
 
     X_train_res, y_train_res = Oversampler().resample(X_train, y_train)
 
@@ -40,31 +37,10 @@ if __name__ == '__main__':
     text_clf_twitter_100 = glove_twitter_100()
 
     text_clf_twitter_100.fit(X_train_res, y_train_res)
-    y_predicted = text_clf_twitter_100.predict(X_test)
-    text_clf_twitter_100.classification_report(
-        y_test,
-        y_predicted,
-        filename=
-        "../findings/GLOVE-TWITTER/SIZE-100/glove-twitter-100-results.csv",
-        save=True)
-    print("MEA: {:.5f}".format(
-        text_clf_twitter_100.mean_absolute_error(y_test, y_predicted)))
 
-    print(
-        f"Total words: {text_clf_twitter_100.pipeline.steps[0][1].total_words_counter}"
-    )
-    print(
-        f"Found words: {text_clf_twitter_100.pipeline.steps[0][1].found_words_counter}"
-    )
-    print(
-        f"Not found words: {text_clf_twitter_100.pipeline.steps[0][1].not_found_words_counter}"
-    )
-    print(
-        f"Unique total words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_total_words_counter)}"
-    )
-    print(
-        f"Unique found words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_found_words_counter)}"
-    )
-    print(
-        f"Unique not found words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_not_found_words_counter)}"
-    )
+    print(f"Total words: {text_clf_twitter_100.pipeline.steps[0][1].total_words_counter}")
+    print(f"Found words: {text_clf_twitter_100.pipeline.steps[0][1].found_words_counter}")
+    print(f"Not found words: {text_clf_twitter_100.pipeline.steps[0][1].not_found_words_counter}")
+    print(f"Unique total words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_total_words_counter)}")
+    print(f"Unique found words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_found_words_counter)}")
+    print(f"Unique not found words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_not_found_words_counter)}")
