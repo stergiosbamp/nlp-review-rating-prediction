@@ -21,7 +21,7 @@ def plot_tokenizers_vs_f1_all_in_one():
     ind = np.arange(len(tokenizers))  # the x locations for the groups
     width = 0.4  # the width of the bars
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8,6))
     rects1 = ax.bar(ind - width * 2 / 6, logistic_regression_f1s, width / 3, label="Logistic Regression")
     rects2 = ax.bar(ind, linear_svm_f1s, width / 3, label="Linear SVM")
     rects3 = ax.bar(ind + width * 2 / 6, naive_bayes_f1s, width / 3, label="Naive Bayes")

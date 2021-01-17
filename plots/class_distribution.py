@@ -19,4 +19,5 @@ if __name__ == "__main__":
     counts = df_target.value_counts()
     counts.plot.pie()
     
+    plt.title("Class distribution of Software product category reviews")
     plt.show()

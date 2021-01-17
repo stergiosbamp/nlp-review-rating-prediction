@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-models = ("TfidfVectorizer", "Mean 100-d GloVe Embeddings\n(pre-trained on Twitter data)", "Mean 100-d Word2Vec Embeddings", "100-d Doc2Vec Embeddings")
+models = ("TfidfVectorizer",
+          "Mean 100-d GloVe Embeddings\n(pre-trained on Twitter data)",
+          "Mean 100-d Word2Vec Embeddings", "100-d Doc2Vec Embeddings")
 
 accuracies = (0.5436, 0.3998, 0.3954, 0.4530)
 weighted_precisions = (0.5469, 0.4690, 0.4600, 0.4419)
@@ -14,8 +16,14 @@ width = 0.4  # the width of the bars
 
 fig, ax = plt.subplots()
 rects1 = ax.bar(ind - width * 3 / 8, accuracies, width / 4, label="Accuracy")
-rects2 = ax.bar(ind - width * 1 / 8, weighted_precisions, width / 4, label="Precision")
-rects3 = ax.bar(ind + width * 1 / 8, weighted_recalls, width / 4, label="Recall")
+rects2 = ax.bar(ind - width * 1 / 8,
+                weighted_precisions,
+                width / 4,
+                label="Precision")
+rects3 = ax.bar(ind + width * 1 / 8,
+                weighted_recalls,
+                width / 4,
+                label="Recall")
 rects4 = ax.bar(ind + width * 3 / 8, weighted_f1s, width / 4, label="F1")
 
 # Add some text for labels, title and custom x-axis tick labels, etc.

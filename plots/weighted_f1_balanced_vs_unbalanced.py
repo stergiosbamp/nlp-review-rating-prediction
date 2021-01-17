@@ -9,7 +9,7 @@ balanced_f1s = (0.5442, 0.5264, 0.5028)
 ind = np.arange(len(models))  # the x locations for the groups
 width = 0.4  # the width of the bars
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8,6))
 rects1 = ax.bar(ind - width / 4, unbalanced_f1s, width / 2, label="Unbalanced data")
 rects2 = ax.bar(ind + width / 4, balanced_f1s, width / 2, label="Balanced data")
 
