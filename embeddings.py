@@ -90,6 +90,10 @@ class MeanGloveTwitterVectorizer:
         self.found_words_counter = 0
         self.not_found_words_counter = 0
 
+        self.unique_total_words_counter = set()
+        self.unique_found_words_counter = set()
+        self.unique_not_found_words_counter = set()
+
     def load_model(self):
         return KeyedVectors.load(self.model_path)
 
@@ -118,12 +122,15 @@ class MeanGloveTwitterVectorizer:
 
             for token in lower_tokenized_doc:
                 self.total_words_counter += 1
+                self.unique_total_words_counter.add(token)
                 try:
                     embedding = self.glove_vectors.wv[token]
                     doc_embeddings.append(embedding)
                     self.found_words_counter += 1
+                    self.unique_found_words_counter.add(token)
                 except KeyError as err:
                     self.not_found_words_counter += 1
+                    self.unique_not_found_words_counter.add(token)
                     continue
 
             if doc_embeddings:

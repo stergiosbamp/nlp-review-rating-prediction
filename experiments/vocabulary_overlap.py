@@ -59,3 +59,12 @@ if __name__ == '__main__':
     print(
         f"Not found words: {text_clf_twitter_100.pipeline.steps[0][1].not_found_words_counter}"
     )
+    print(
+        f"Unique total words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_total_words_counter)}"
+    )
+    print(
+        f"Unique found words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_found_words_counter)}"
+    )
+    print(
+        f"Unique not found words: {len(text_clf_twitter_100.pipeline.steps[0][1].unique_not_found_words_counter)}"
+    )
