@@ -79,12 +79,20 @@ class MeanGloveTwitterVectorizer:
             print("Loading Gensim's model: {}".format(self.model_to_download))
             self.glove_vectors = self.load_model()
         else:
-            print("Downloading Gensim's model : {}...".format(self.model_to_download))
+            print("Downloading Gensim's model : {}...".format(
+                self.model_to_download))
             self.glove_vectors = downloader.load(self.model_to_download)
             self.glove_vectors.save(self.model_path)
             print("Downloaded and saved model")
 
         self.preprocess = Preprocess()
+        self.total_words_counter = 0
+        self.found_words_counter = 0
+        self.not_found_words_counter = 0
+
+        self.unique_total_words_counter = set()
+        self.unique_found_words_counter = set()
+        self.unique_not_found_words_counter = set()
 
     def load_model(self):
         return KeyedVectors.load(self.model_path)
@@ -113,10 +121,16 @@ class MeanGloveTwitterVectorizer:
             lower_tokenized_doc = self.preprocess.lowercase(tokenized_doc)
 
             for token in lower_tokenized_doc:
+                self.total_words_counter += 1
+                self.unique_total_words_counter.add(token)
                 try:
                     embedding = self.glove_vectors.wv[token]
                     doc_embeddings.append(embedding)
+                    self.found_words_counter += 1
+                    self.unique_found_words_counter.add(token)
                 except KeyError as err:
+                    self.not_found_words_counter += 1
+                    self.unique_not_found_words_counter.add(token)
                     continue
 
             if doc_embeddings:

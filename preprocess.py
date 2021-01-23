@@ -1,5 +1,6 @@
 import nltk
 import spacy
+import string
 
 from nltk.corpus import stopwords
 
@@ -10,7 +11,7 @@ class Preprocess:
         nltk.download('stopwords')
         self.nlp = spacy.load("en_core_web_sm")
 
-    def tokenize(self, document, keep_stopwords=False):
+    def tokenize(self, document, keep_stopwords=False, remove_punctuation=True):
         """
         Method that tokenizes a sentence using NLTK's recommended word tokenizer (TreebankWordTokenizer
         along with PunktSentenceTokenizer)
@@ -24,6 +25,9 @@ class Preprocess:
         """
 
         tokens = nltk.word_tokenize(document)
+        if remove_punctuation:
+            tokens = [token for token in tokens if token not in string.punctuation]
+
         stopwords_set = set(stopwords.words('english'))
 
         if keep_stopwords:
