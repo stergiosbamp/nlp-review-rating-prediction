@@ -1,5 +1,4 @@
-# nlp-review-rating-prediction
-This is repository for the NLP course project.
+# Natural Language Processing - Review Rating Prediction
 
 ## Task
 Product review rating prediction is the task of predicting a review rating from 
