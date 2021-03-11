@@ -1,5 +1,9 @@
 # Natural Language Processing - Review Rating Prediction
 
+## Paper
+
+Read the [paper](paper/Products-review-rating-prediction-from-users-text-reviews.pdf) of this project for the theoritical details, the experiments that were conducted and the performance of the models.
+
 ## Task
 Product review rating prediction is the task of predicting a review rating from 
 the free-form text part of a review. It’s a relatively new machine 
